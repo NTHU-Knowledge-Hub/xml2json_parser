@@ -1,20 +1,22 @@
 '''
-Project : K-HUB (XML-Parser)
+Project : K-HUB (XML-TO-JSON-Parser)
 Date: 2015-10-04
 '''
-
+# -\*- coding: utf-8 -\*-
 import xml.etree.ElementTree as ET
 import csv
+import json
+
 
 #get the details of book
 def getBookDetails(book):
-	line = []
+	d = {}
+
 	for details in book:
-		print (details.tag, end=":  ")
-		item = book.find(details.tag).text
-		#line.append(str(item).replace('\n',' ').replace('\t', ' '))
-		print (item)
-	#f.writerow(['\t'.join(line)])
+		item = str(book.find(details.tag).text)
+		d[details.tag] = item
+
+	return d
 
 #get BookAttributes
 def getBookAttributes(book):
@@ -23,21 +25,17 @@ def getBookAttributes(book):
 		line.append(str(details.tag))
 	f.writerow(['\t'.join(line)])
 
-
 #get the data for each book
 def getBooks(itemName):
-	#count = 0
-
-	for book in root.iter(itemName):
-		#if count == 0:
-		#	getBookAttributes(book)
-		
-		#get the details of the book
-		getBookDetails(book)
-		#count+=1	
+	d = {}
+	dictionaries=json.loads(json.dumps([dict(book=getBookDetails(book)) for book in root.iter(itemName)]))
+	return dictionaries
+	
 
 #MAIN######################################################
-#f = csv.writer(open("thesis.csv",'a'),delimiter="\t")
+
+j = open('thesis.json','w')
+
 
 #parse the XML file
 tree = ET.parse('99.xml')
@@ -45,9 +43,10 @@ tree = ET.parse('99.xml')
 #obtain root
 root = tree.getroot()
 
-#calling to get all books
-getBooks ('book')
+data ={}
+data['books'] = (getBooks ('book'))
+j.write(json.dumps(data,indent=4, ensure_ascii=False))
+j.close()
 
-
-
+print ("end of script")
 

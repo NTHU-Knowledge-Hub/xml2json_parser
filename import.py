@@ -13,7 +13,7 @@ def getBookDetails(book):
 		print (details.tag, end=":  ")
 		item = book.find(details.tag).text
 		#line.append(str(item).replace('\n',' ').replace('\t', ' '))
-		print item
+		print (item)
 	#f.writerow(['\t'.join(line)])
 
 #get BookAttributes
